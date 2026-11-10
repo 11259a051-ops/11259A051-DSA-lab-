@@ -1,0 +1,208 @@
+#include <stdio.h>
+#define MAX 5
+int queue[MAX];
+int front = -1, rear = -1;
+void enqueue(int id)
+{
+if (rear == MAX - 1)
+{
+printf("Queue is Full! Cannot enqueue Student ID %d\n", id);
+return;
+}
+//Inserting the first element
+if (front == -1)
+front = 0;
+queue[++rear] = id;
+printf("Student ID %d added to fee-payment queue\n", id);
+}
+void dequeue()
+{
+if (front == -1 || front > rear)
+{
+printf("Queue is Empty!\n");
+return;
+}
+printf("Student ID %d served and removed from queue\n", queue[front++]);
+}
+void display()
+{
+if (front == -1 || front > rear)
+{
+printf("Queue is Empty!\n");
+return;
+}
+printf("Current Queue: ");
+for (int i = front; i <= rear; i++)
+printf("%d ", queue[i]);
+printf("\n");
+}
+int main()
+{
+int choice, id;
+do
+{
+printf("\n1.Enqueue 2.Dequeue 3.Display 4.Exit\nEnter choice: ");
+scanf("%d", &choice);
+switch (choice)
+{
+case 1:
+printf("Enter Student ID: ");
+scanf("%d", &id);
+enqueue(id);
+break;
+case 2:
+dequeue();
+break;
+case 3:
+display();
+break;
+case 4:
+printf("Exiting...\n");
+break;
+default:
+printf("Invalid choice!\n");
+}
+} while (choice != 4);
+return 0;
+}
+Experiment 6: Implementation of Priority Queue using Unordered Array
+ Case Study Context
+The scholarship committee receives applications throughout the month. Instead of
+awarding scholarships in the order applications arrive, they must be awarded strictly
+by merit - the applicant with the highest CGPA is served first.
+ Objective of the Experiment
+To understand how a priority queue di ers from a simple queue by serving elements
+based on priority (CGPA) rather than arrival order, and to implement FindMax, Insert,
+and DeleteMax using an unordered array.
+ Aim
+To write a C program to implement a priority queue using an unordered array, where
+the highest CGPA is served first.
+ Algorithm
+1. Start
+2. Initialize FRONT = -1, REAR = -1, and an array PQ[MAX].
+3. INSERT(ITEM):
+1. if REAR == MAX - 1, report Queue Overflow
+2. else, if FRONT == -1, set FRONT = 0; then increment REAR and store the
+ITEM at PQ[REAR].
+4. FindMax():
+1. 2. if FRONT == -1, report Queue Underflow;
+else, linearly scan from index FRONT to REAR to find highest value and
+return the INDEX of the highest CGPA element.
+5. DELETE():
+1. 2. 3. 6. 7. Stop
+if FRONT == -1, report Queue Underflow.
+else, call FindMax() to get INDEX of highest value (CGPA) element,
+remove the ITEM at PQ[INDEX] by shifting elements from INDEX to REAR -
+1 one position left, decrement REAR, and
+if REAR < FRONT, reset FRONT = -1 and REAR = -1.
+Repeat steps 3-5 based on the user's menu choice until Exit is selected.
+ Sample Input
+Menu choices: 1 (201, 8.4), 1 (202, 9.2), 1 (203, 7.9), 2 (award), 2 (award), 3 (exit)
+ Sample Output
+Applicant 201 (CGPA 8.40) added to scholarship pool
+Applicant 202 (CGPA 9.20) added to scholarship pool
+Applicant 203 (CGPA 7.90) added to scholarship pool
+Scholarship awarded to Applicant 202 (CGPA 9.20)
+Scholarship awarded to Applicant 201 (CGPA 8.40)
+Exiting...
+ Key Observations
+1. Adding a new item takes just one step because it goes directly to the end of the
+array.
+2. Finding the highest-priority item is slow because the computer must check every
+single item one by one.
+3. Removing the highest-priority item requires searching through the whole list,
+then shifting the remaining items to fill the gap.
+4. This approach makes inserting data very fast, but finding and removing data
+takes much longer as the list grows.
+ Code:
+#include <stdio.h>
+#include <limits.h>
+#define MAX 50
+int PQ[MAX];
+int FRONT = -1;
+int REAR = -1;
+void insert(int ITEM)
+{
+if (REAR == MAX - 1)
+{
+printf("Queue Overflow\n");
+return;
+}
+if (FRONT == -1)
+{
+FRONT = 0;
+}
+REAR = REAR + 1;
+PQ[REAR] = ITEM;
+printf("Inserted Item = %d\n", ITEM);
+}
+int findMax()
+{
+if (FRONT == -1)
+{
+printf("Queue Underflow\n");
+return -1;
+}
+int highestPriority = INT_MIN;
+int INDEX = -1;
+for (int i = FRONT; i <= REAR; i++)
+{
+if (PQ[i] > highestPriority)
+{
+highestPriority = PQ[i];
+INDEX = i;
+}
+}
+return INDEX;
+}
+void deleteItem()
+{
+if (FRONT == -1)
+{
+printf("Queue Underflow\n");
+return;
+}
+int INDEX = findMax();
+/* Extra safety check in case FindMax returns -1 */
+if (INDEX == -1)
+return;
+int ITEM = PQ[INDEX];
+/* Shift elements left to close the gap */
+for (int i = INDEX; i < REAR; i++)
+{
+PQ[i] = PQ[i + 1];
+}
+REAR = REAR - 1; /* As elements are shifted */
+/* Reset queue if it becomes empty */
+if (REAR < FRONT)
+{
+FRONT = -1;
+REAR = -1;
+}
+printf("Deleted Item = %d\n", ITEM);
+}
+int main()
+{
+int choice, item;
+do
+{
+printf("\n1.Insert 2.DeleteMax 3.Exit\nEnter choice: ");
+scanf("%d", &choice);
+switch (choice)
+{
+case 1:
+printf("Enter Item value (Priority): ");
+scanf("%d", &item);
+insert(item);
+break;
+case 2:
+deleteItem();
+break;
+case 3:
+printf("Exiting...\n");
+break;
+default:
+printf("Invalid choice!\n");
+}
+} while (choice != 3);
+return 0;
